@@ -42,7 +42,7 @@ const UpdatePage: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        alert("Failed to load user data");
+        toast.warning("Failed to load user data");
       } finally {
         setIsLoading(false);
       }
