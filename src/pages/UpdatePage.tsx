@@ -41,7 +41,6 @@ const UpdatePage: React.FC = () => {
           setInitialData(transformedData);
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
         toast.warning("Failed to load user data");
       } finally {
         setIsLoading(false);
@@ -73,9 +72,14 @@ const UpdatePage: React.FC = () => {
       try {
         if (id) {
           const response = await apiService.updateUser(id, values);
-          if (response) {
+
+          if (response.status) {
+            toast.success(response.statusText ?? "Update success");
+
             resetForm();
             navigate("/view");
+          } else {
+            toast.error(response.statusText ?? "Update failed");
           }
         }
       } catch (error) {

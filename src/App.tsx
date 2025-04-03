@@ -4,7 +4,6 @@ import {
   Routes,
   Route,
   Navigate,
-  Link,
 } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
@@ -12,10 +11,12 @@ import RegisterPage from "./pages/RegisterPage";
 import UserViewPage from "./pages/UserViewPage";
 import UpdatePage from "./pages/UpdatePage";
 import PhotoUploadPage from "./pages/PhotoUploadPage";
+import { ToastContainer } from "react-toastify";
 
 const App: React.FC = () => {
   return (
     <Router>
+      <ToastContainer />
       <div>
         <h1>Welcome To User Management App</h1>
 

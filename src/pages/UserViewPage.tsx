@@ -31,7 +31,7 @@ const UserViewPage: React.FC = () => {
   const handleSearch = async () => {
     try {
       const response = await apiService.searchUsers(query);
-      setResults(response.data);
+      setResults(response.data ?? []);
     } catch (error) {
       console.error(error);
     }
@@ -39,12 +39,16 @@ const UserViewPage: React.FC = () => {
 
   const handleDeletePhoto = async (photoId: number, userId: number) => {
     try {
-      await apiService.deletePhoto(photoId);
-      toast.success("Photo deleted successfully");
-      setResults([]);
-      handleSearch();
+      const response = await apiService.deletePhoto(photoId);
+      if (response.status) {
+        toast.success(response.statusText ?? "Photo deleted successfully");
+
+        setResults([]);
+        handleSearch();
+      } else {
+        toast.error(response.statusText ?? "Photo delete failed");
+      }
     } catch (error) {
-      console.error("Error deleting photo:", error);
       toast.error("Failed to delete photo");
     }
   };
@@ -61,7 +65,7 @@ const UserViewPage: React.FC = () => {
         </Link>
       </div>
       <div className="row mb-3">
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <input
             type="text"
             className="form-control"
@@ -69,7 +73,7 @@ const UserViewPage: React.FC = () => {
             onChange={(e) => setQuery({ ...query, firstName: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <input
             type="text"
             className="form-control"
@@ -77,7 +81,7 @@ const UserViewPage: React.FC = () => {
             onChange={(e) => setQuery({ ...query, lastName: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <input
             type="text"
             className="form-control"
@@ -85,7 +89,7 @@ const UserViewPage: React.FC = () => {
             onChange={(e) => setQuery({ ...query, startDate: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <input
             type="text"
             className="form-control"
@@ -93,7 +97,7 @@ const UserViewPage: React.FC = () => {
             onChange={(e) => setQuery({ ...query, endDate: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <input
             type="text"
             className="form-control"
@@ -101,7 +105,7 @@ const UserViewPage: React.FC = () => {
             onChange={(e) => setQuery({ ...query, gender: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-md-2 mb-2">
           <button className="btn btn-primary w-100" onClick={handleSearch}>
             Search
           </button>
@@ -121,26 +125,29 @@ const UserViewPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {results.map((user) => (
-            <tr key={user.id}>
-              <td>{user.title}</td>
-              <td>{`${user.firstName} ${user.lastName}`}</td>
-              <td>{moment(user.dateOfBirth).format("YYYY-MM-DD")}</td>
-              <td>{user.gender}</td>
-              <td>{user.remark}</td>
+          {results?.map((user) => (
+            <tr key={user?.id}>
+              <td>{user?.title}</td>
+              <td>{`${user?.firstName} ${user?.lastName}`}</td>
+              <td>{moment(user?.dateOfBirth).format("YYYY-MM-DD")}</td>
+              <td>{user?.gender}</td>
+              <td>{user?.remark}</td>
               <td>
-                <Link to={`/update/${user.id}`} className="btn btn-sm btn-info">
+                <Link
+                  to={`/update/${user?.id}`}
+                  className="btn btn-sm btn-info"
+                >
                   Edit
                 </Link>
               </td>
               <td>
-                {user.userPhotos.map((photo) => (
+                {user?.userPhotos?.map((photo) => (
                   <div
-                    key={photo.id}
+                    key={photo?.id}
                     className="position-relative d-inline-block mx-1"
                   >
                     <img
-                      src={photo.file}
+                      src={photo?.file}
                       alt="User"
                       width="50"
                       className="rounded"
@@ -150,15 +157,15 @@ const UserViewPage: React.FC = () => {
                       style={{
                         fontSize: "0.75rem",
                       }}
-                      onClick={() => handleDeletePhoto(photo.id, user.id)}
+                      onClick={() => handleDeletePhoto(photo?.id, user?.id)}
                     >
                       X
                     </button>
                   </div>
                 ))}
-                {user.userPhotos.length < 2 && (
+                {user?.userPhotos?.length < 2 && (
                   <Link
-                    to={`/upload/${user.id}`}
+                    to={`/upload/${user?.id}`}
                     className="mt-2 btn btn-sm btn-success d-flex align-items-center justify-content-center"
                     style={{ width: "5px", height: "5px", fontSize: "0.75rem" }}
                     title="Add Photo"

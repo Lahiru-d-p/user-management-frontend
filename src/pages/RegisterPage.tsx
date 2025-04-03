@@ -42,10 +42,13 @@ const RegisterPage: React.FC = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const response = await apiService.registerUser(values);
-
-        toast.success("User registered successfully!");
-        resetForm();
-        navigate("/login");
+        if (response.status) {
+          toast.success(response.statusText ?? "User registered successfully!");
+          resetForm();
+          navigate("/login");
+        } else {
+          toast.error(response.statusText ?? "Registration failed");
+        }
       } catch (error) {
         toast.error("Registration failed");
       }

@@ -30,9 +30,15 @@ const LoginPage: React.FC = () => {
     onSubmit: async (values, { resetForm }) => {
       try {
         const response = await apiService.login(values);
-        localStorage.setItem("token", response.data.token);
-        resetForm();
-        navigate("/view");
+        if (response.status) {
+          localStorage.setItem("token", response.data);
+          toast.success(response.statusText ?? "User Login success");
+
+          resetForm();
+          navigate("/view");
+        } else {
+          toast.error(response.statusText ?? "Login failed");
+        }
       } catch (error) {
         toast.error("Login failed");
       }

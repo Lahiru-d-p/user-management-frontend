@@ -22,10 +22,14 @@ const PhotoUploadPage: React.FC = () => {
     files.forEach((file) => formData.append("files", file));
 
     try {
-      await apiService.uploadPhotos(id ?? "0", formData);
-      navigate("/view");
+      const response = await apiService.uploadPhotos(id ?? "0", formData);
+      if (response.status) {
+        toast.success(response.statusText ?? "Upload success");
+        navigate("/view");
+      } else {
+        toast.error(response.statusText ?? "Upload failed");
+      }
     } catch (error) {
-      console.error(error);
       toast.error("Photo upload failed");
     }
   };
